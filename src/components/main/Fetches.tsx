@@ -9,8 +9,9 @@ import FormGroup from '@material-ui/core/FormControl';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
 import FetchResults from './FetchResults';
+import APIURL from '../../helpers/environment';
 
- let url: string = 'http://localhost:3000/animals/'; 
+ let url: string = `${APIURL}/animals/`; 
 
 type IProps = {
 sessionToken?: string, 

@@ -1,4 +1,5 @@
 import React from 'react';
+import APIURL from '../../helpers/environment';
 
 interface IProps {
 updateToken: Function,
@@ -39,7 +40,7 @@ signInToggler = (event: any) => {
 
 userFunction = (event: any) => {
     event.preventDefault();
-    let url = this.state.signIn ? `http://localhost:3000/user/login` : `http://localhost:3000/user/register`
+    let url = this.state.signIn ? `${APIURL}/user/login` : `${APIURL}/user/register`
     let userObject = {
         fName: this.state.firstName,
         lName: this.state.lastName,

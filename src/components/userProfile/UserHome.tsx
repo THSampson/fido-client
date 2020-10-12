@@ -4,6 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
+import APIURL from '../../helpers/environment';
 
 import Header from '../webcomps/Header'
 
@@ -50,7 +51,7 @@ location: '',
 }
 
 fetchProfile = () => {
-  let url: string = 'http://localhost:3000/user'
+  let url: string = `${APIURL}/user`
     fetch(url, {
         method: 'GET',
         headers: new Headers({

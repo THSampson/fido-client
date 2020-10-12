@@ -7,8 +7,9 @@ import Button from "@material-ui/core/Button";
 import FormGroup from "@material-ui/core/FormControl";
 import Switch from "@material-ui/core/Checkbox";
 import Modal from '@material-ui/core/Modal';
+import APIURL from '../../helpers/environment'
 
-let url: string = "https://finding-fido-server.herokuapp.com/profile";
+let url: string = `${APIURL}/profile`;
 
 type IProps = {
 sessionToken?: string, 

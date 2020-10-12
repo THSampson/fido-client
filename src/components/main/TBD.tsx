@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import FormGroup from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import FetchResults from './FetchResults';
+import APIURL from '../../helpers/environment';
 
 type IProps = {
     sessionToken?: string, 
@@ -30,7 +31,7 @@ results: {}
 }
 
 fetchResults = () => {
-let url: string = "http://localhost:3000/animals";
+let url: string = `${APIURL}/animals`;
 let animalObject = {
   location: this.state.location,
   type: this.state.type,
