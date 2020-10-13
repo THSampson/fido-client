@@ -2,17 +2,21 @@ import React from 'react';
 // import Login from './components/Auth/Login'
 // import Register from './components/Auth/Register'
 import Auth from '../Auth/Auth'
-import Home from '../../components/userProfile/UserHome';
+import Home from '../userProfile/ProfileHome';
  
 
 type IProps = {
 sessionToken?: string, 
-profile?: any,
+profile?: any, 
+editProfile?: Function,
+deleteProfile?: Function
 
 }
 
 interface IState {
 sessionToken: string,
+profile: []
+
 }
 
 class App extends React.Component<IProps, IState> {
@@ -20,6 +24,7 @@ class App extends React.Component<IProps, IState> {
     super(props)
     this.state = {
     sessionToken: '',
+    profile: []
     }
 }
 
@@ -42,7 +47,7 @@ updateToken = (newToken: string) => {
 
 viewToggle = () => {
     return (this.state.sessionToken === '' ? <Auth updateToken={this.updateToken}/>
-    : <Home sessionToken={this.state.sessionToken} />)
+    : <Home profile={this.state.profile} sessionToken={this.state.sessionToken} />)
 }
 
 

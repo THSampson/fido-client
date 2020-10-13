@@ -90,7 +90,7 @@ render(){
             email: event.target.value})}/>
         <br />
         <label htmlFor="password">Password</label>
-        <input type="text" id="password" placeholder="Password" value={this.state.password} 
+        <input type="password" id="password" placeholder="Password" value={this.state.password} 
         onChange={event => this.setState({
             password: event.target.value})} />
     <div id="passwordValid">

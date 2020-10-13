@@ -8,47 +8,41 @@ import Button from '@material-ui/core/Button';
 import FormGroup from '@material-ui/core/FormControl';
 import Checkbox from '@material-ui/core/Checkbox';
 import TextField from '@material-ui/core/TextField';
-import FetchResults from './FetchResults';
 import APIURL from '../../helpers/environment';
 
- let url: string = `${APIURL}/animals/`; 
+ let url: string = `${APIURL}/animals/`;
 
 type IProps = {
 sessionToken?: string, 
-animalList?: any,
 results?: any,
 pageNumber?: any,
     }
 
 interface IState {
 pageNumber: number,
-animalList: any,
 results: any,
 type: string,
 age: string,
 gender: string,
 value: string,
-kid: boolean,
-cat: boolean,
-dog: boolean,
+kids: boolean,
+pets: boolean,
 location: string
 }
 
 
-class dogFetch extends React.Component<IProps,IState> {
+class Fetch extends React.Component<IProps,IState> {
 constructor(props: IProps) {
     super(props)  
     this.state = {
        pageNumber: 0,
-       animalList: [],
        results: [],
        type: '',
        age: '',
        gender: '',
        value: "female",
-       kid: true,
-       cat: false,
-       dog: false,
+       kids: true,
+       pets: false,
        location: ''
         }
 }
@@ -71,7 +65,7 @@ fetch(url, {
 .then(data => {
     console.log(data);
     this.setState({
-        animalList: data
+        results: data
         })
 }) 
 .catch(err => console.log(err))
@@ -143,14 +137,12 @@ render() {
 <Button variant="outlined" type="submit">Fetch!</Button>
 </FormControl>
 
-< FetchResults animalList={this.state.animalList} />
-
 </div>
     )
-    }
+}
 
 }
-export default dogFetch;
+export default Fetch;
 
 
 

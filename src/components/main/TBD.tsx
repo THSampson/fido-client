@@ -7,7 +7,6 @@ import FormLabel from '@material-ui/core/FormLabel';
 import Button from '@material-ui/core/Button';
 import FormGroup from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
-import FetchResults from './FetchResults';
 import APIURL from '../../helpers/environment';
 
 type IProps = {
