@@ -1,49 +1,15 @@
 import React from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import clsx from 'clsx';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Collapse from '@material-ui/core/Collapse';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
+import {Card, Typography, IconButton, Collapse, CardActions, CardContent, CardMedia, CardHeader} from '@material-ui/core';
 import { red } from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import APIURL from '../../helpers/environment';
-import { AnySrvRecord } from 'dns';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      maxWidth: 345,
-    },
-    media: {
-      height: 0,
-      paddingTop: '56.25%', // 16:9
-    },
-    expand: {
-      transform: 'rotate(0deg)',
-      marginLeft: 'auto',
-      transition: theme.transitions.create('transform', {
-        duration: theme.transitions.duration.shortest,
-      }),
-    },
-    expandOpen: {
-      transform: 'rotate(180deg)',
-    },
-    avatar: {
-      backgroundColor: red[500],
-    },
-  }),
-);
-const classes = useStyles();
+
 type IProps = {
-    sessionToken?: string, 
-    results: AnySrvRecord,
+    sessionToken: string, 
+    results: [],
     fetchResults: Function
     }
 
@@ -63,7 +29,7 @@ expanded: boolean
 
 }
 
-class FavCard extends React.Component<IProps, IState> {
+class FavCard extends React.Component<any, IState> {
     constructor(props: IProps){
     super(props)
     this.state = {
@@ -100,7 +66,8 @@ handleExpandClick = () => {
       method: "POST",
       body: JSON.stringify(animalObject),
       headers: new Headers({
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          "Authorization": this.props.sessionToken
       })
     })
       .then((res) => res.json())
@@ -118,12 +85,11 @@ handleExpandClick = () => {
 
   render() {
   return (
-    <Card className={classes.root}>
+    <Card>
       <CardHeader
        title={this.state.results.name}
          />
       <CardMedia
-        className={classes.media}
         image={this.state.results.img}
       />
       <CardContent>
@@ -149,9 +115,6 @@ handleExpandClick = () => {
           <ShareIcon />
         </IconButton>
         <IconButton
-          className={clsx(classes.expand, {
-            [classes.expandOpen]: this.state.expanded,
-          })}
           onClick={this.handleExpandClick}
           aria-expanded={this.state.expanded}
           aria-label="show more"

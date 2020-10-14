@@ -1,28 +1,19 @@
 import React from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
+import styled from 'styled-components';
+import Logo from '../../assets/FindingFidoTrans.png';
 
+const MyHeader = styled.div`
+text-align: center;
+`
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-      '& > *': {
-        margin: theme.spacing(1),
-      },
-    },
-  }),
-);
-
-const Header = (props: any) => {
-const classes = useStyles();
+const Header = () => {
 return (
-    <div className={classes.root}>
+    <MyHeader className="header">
     <header>
-    <h2>Welcome Back {props.firstName}</h2>
-    <Avatar alt="UserAvatar" src={props.photos} />
+<h2>Welcome to Finding Fido <img src={Logo} height="50" alt={"Logo"}/></h2>
+    
     </header>
-    </div>
+    </MyHeader>
 );
 };
 

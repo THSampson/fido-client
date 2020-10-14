@@ -1,0 +1,39 @@
+.sidebar {
+    display: flex;
+    background-color: transparent;
+    margin-top: 5rem;
+    font-size: 25px;
+    color: black;
+    text-align: left;
+    
+}
+
+ul {
+    list-style-type: none;
+    font-weight: bold;     
+}
+
+
+.sidebar-route {
+    flex: 1;
+    padding: 0px;
+}
+
+a:link {
+    text-decoration: none;
+    color: black;
+  }
+  
+  a:visited {
+    text-decoration: none;
+    color: black;
+  }
+  
+  a:hover {
+    text-decoration: none;
+  }
+  
+  a:active {
+    text-decoration: none;
+  }
+

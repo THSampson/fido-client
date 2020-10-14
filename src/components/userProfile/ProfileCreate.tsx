@@ -1,16 +1,24 @@
 import React from "react";
-import {Paper, Grid, Button, Typography, FormControlLabel, FormControl, FormLabel, FormGroup, Switch, TextField, Modal}  from '@material-ui/core';
-import APIURL from '../../helpers/environment'
-import ProfileHome from '../userProfile/ProfileHome';
+import {
+  Paper,
+  Grid,
+  Button,
+  Typography,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  FormGroup,
+  Switch,
+  TextField,
+  Modal,
+} from "@material-ui/core";
+import APIURL from "../../helpers/environment";
+import ProfileHome from "../userProfile/ProfileHome";
 
 type IProps = {
-sessionToken: string, 
-profile: any,
-editProfile: Function,
-fetchProfile: Function,
-viewProfileToggle: Function,
-handleChange: Function
-}
+  sessionToken: string;
+  fetchProfile: Function;
+};
 
 interface IState {
   name: string;
@@ -18,100 +26,119 @@ interface IState {
   kids: boolean;
   pets: boolean;
   location: string;
-  open: boolean
-  profile: any,
+  id: number;
+  profile: {};
+  open: boolean;
 }
 
-class profileCreate extends React.Component<any, IState> {
+class profileCreate extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
       profile: {},
       name: "",
-      age: "",
-      kids: true,
-      pets: true,
-     location: "",
-     open: false,
+        age: "",
+        kids: true,
+        pets: true,
+        location: "",
+        id: 0,
+        open: false,
     };
   }
 
-handleSubmit = (event: any) => { 
-  event.preventDefault();
-    let url: string = `${APIURL}/profile/create`   
+  handleSubmit = (event: any) => {
+    event.preventDefault();
+    let url: string = `${APIURL}/profile/create`;
     let profileObject = {
       name: this.state.name,
       age: this.state.age,
       kids: this.state.kids,
       pets: this.state.pets,
-      location: this.state.location
+      location: this.state.location,
     };
-      fetch(url, {
-          method: 'POST',
-          body: JSON.stringify(profileObject),
-          headers: new Headers({
-              'Content-Type': 'application/json'
-                  })
-      })
-      .then(res => res.json())
-      .then(data => {
-          this.setState({
-            profile: data,
-            name: '',
-            age: '',
-            kids: false,
-            pets: false,
-            location: ''
-          })
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(profileObject),
+      headers: new Headers({
+        "Content-Type": "application/json",
+        "Authorization": this.props.sessionToken,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data[0])
+        this.setState({
+          profile: data[0],
+        });
         this.props.fetchProfile();
-        this.props.viewProfileToggle();
-        })    
-  }
+      });
+  };
+
+  handleChange = (event: any) => {
+    event.preventDefault();
+    this.setState({
+        ...this.state,
+        [event.target.name]: event.target.checked,
+    });
+  };
+
 
   render() {
     return(
     <div>
-      <form>
-         <FormGroup onSubmit={this.props.handleChange()}>
+        <form onSubmit={this.handleSubmit}>
+          <FormGroup>
             <TextField
               id="name"
+              name="name"
               label="Name"
               variant="outlined"
-              value={this.state.name}
-              onChange={(event) => this.setState({
-                name: event.target.value,
-              })} />
+              onChange={(event) => this.setState({name: event.target.value})}
+            />
             <TextField
-              id="name"
+              id="age"
+              name="age"
               label="Age"
               variant="outlined"
-              value={this.state.age}
-              onChange={(event) => this.setState({
-                age: event.target.value,
-              })} />
+              onChange={(event) => this.setState({age: event.target.value})}
+            />
             <FormLabel>A Bit About Yourself</FormLabel>
             <FormControlLabel
-              control={<Switch
-                checked={this.state.kids}
-                onChange={(event) => this.setState({kids: event.target.checked })}
-                name="kids" />}
-              label="Kids?" />
+              control={
+                <Switch
+                color="primary"
+                onChange={this.handleChange}
+                  name="kids"
+                />
+              }
+              label="Kids?"
+            />
             <FormControlLabel
-              control={<Switch
-                checked={this.state.pets}
-                onChange={(event) => this.setState({pets: event.target.checked })}
-                name="cats" />}
-              label="Other Pets?" />
+              control={
+                <Switch
+                color="primary"
+                  onChange={this.handleChange}
+                 name="pets"
+                />
+              }
+              label="Other Pets?"
+            />
             <TextField
               id="location"
+              name="location"
               variant="outlined"
               label="Zipcode"
-              onChange={(event) => this.setState({location: event.target.value })} />
-          <Button variant="contained" color="primary" href="#ProfileHome" type="submit">Create</Button>
+              onChange={(event) =>
+                this.setState({location: event.target.value})}
+
+            />
+            <Button variant="contained" color="primary" type="submit">
+              Create
+            </Button>
           </FormGroup>
-          </form>
-     </div>
-    );
+        </form>
+      </div>
+    )
   }
 }
 

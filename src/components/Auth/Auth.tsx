@@ -1,5 +1,6 @@
 import React from 'react';
 import APIURL from '../../helpers/environment';
+import './Auth.css';
 
 interface IProps {
 updateToken: Function,
@@ -52,7 +53,7 @@ fetch(url, {
     method: 'POST',
     body: JSON.stringify(userObject),
     headers: new Headers({
-     'Content-Type': 'application/json',   
+     'Content-Type': 'application/json',  
     })
 })
 .then(res => res.json())
