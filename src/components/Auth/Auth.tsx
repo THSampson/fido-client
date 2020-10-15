@@ -62,10 +62,7 @@ fetch(url, {
 .then((json) => {
     this.props.updateToken(json.sessionToken)
      console.log(json.sessionToken)
-     this.setState({
-         sessionToken: json.sessionToken
-     })
-})
+   })
 .catch(err => console.log(err))
 }
 
