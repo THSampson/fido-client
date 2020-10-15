@@ -1,7 +1,6 @@
 import React from 'react';
-import {Card, Typography, IconButton, Collapse, CardActions, CardContent, CardMedia, CardHeader} from '@material-ui/core';
+import {Card, Typography, Modal, Button, TextField, FormGroup, CardContent, CardHeader} from '@material-ui/core';
 import APIURL from '../../helpers/environment';
-import {Button, TextField} from '@material-ui/core';
 import styled from 'styled-components';
 import './Favorites.css';
 
@@ -21,6 +20,9 @@ type: string,
 name: string,
 comment: string,
 results: any,
+id: number,
+open: boolean,
+updateActive: boolean,
     }
 
 
@@ -32,7 +34,11 @@ class FavCard extends React.Component<IProps, IState> {
       name: "",
       type: "",
       comment: "",
-      results: ""
+      results: "",
+      id: 0,
+        open: false,
+        updateActive: false,
+
     };
   }
   getFavs = () => {
@@ -56,7 +62,7 @@ handleChange = (event: any)  => {
       body: JSON.stringify({
           name: this.state.name,
           type: this.state.type,
-          comment: this.state.comment
+          comment: this.state.comment,
       }),
       headers: new Headers ({
         'Content-Type': 'application/json',
@@ -71,9 +77,59 @@ handleChange = (event: any)  => {
     })
   .catch((err) => console.log(err))
   }
+  deleteFav = () => {
+    fetch(`${APIURL}/favorites/${this.state.id}`, {
+       method: "DELETE",
+        headers: new Headers({
+         "Content-Type": "application/json",
+       }),
+     })
+       this.getFavs();
+   };
+
+editFav = (event: any) => {
+  let favObject = {
+      name: this.state.name,
+      age: this.state.type,
+      comment: this.state.comment
+    };
+  event.preventDefault();
+  fetch(`${APIURL}/favorites/${this.state.id}`, {
+    method: "PUT",
+    body: JSON.stringify(favObject),
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      this.setState({
+      results: data
+      }) 
+      this.getFavs(); 
+    })
+    .catch((err) => console.log(err));
+};
+
+ handleOpen = () => {
+  this.setState({
+    open: true });
+};
+
+handleClose = () => {
+  this.setState({
+    open: false });
+};
+
+
+updateToggle = () => {
+  this.setState({
+    updateActive: !this.state.updateActive
+  });
+}  
 render() {
   return (
-    
+    <>
     <Centered>
       <div>
     <form onSubmit={this.handleChange}>
@@ -98,10 +154,61 @@ render() {
             {this.state.results.comment}
           </Typography>
           </CardContent>
-          <Button>Edit</Button>
-          <Button>Delete</Button>
+          <Button variant="contained" onClick={this.handleOpen} size="small" color="primary">Edit</Button>
     </Card>
     </Centered>
+    
+    <Modal
+    className="modalType"
+    open={this.state.open}
+    onClose={this.handleClose}
+    onClick={this.updateToggle}
+    aria-labelledby="simple-modal-title"
+    aria-describedby="simple-modal-description"
+  >
+    <FormGroup>
+      <TextField
+        id="name"
+        name="name"
+        label="Name"
+        variant="outlined"
+        value={this.state.name}
+        onChange={(event) => this.setState({name: event.target.value})}
+      />
+      <TextField
+        id="name"
+        label="Age"
+        name="age"
+        variant="outlined"
+        value={this.state.type}
+        onChange={(event) => this.setState({type: event.target.value})}
+      />
+        <TextField
+        id="name"
+        label="Age"
+        name="age"
+        variant="outlined"
+        value={this.state.comment}
+        onChange={(event) => this.setState({comment: event.target.value})}
+      />
+      <Button
+        type="submit"
+        onClick={this.editFav}
+        variant="contained"
+        color="primary"
+      >
+        Submit
+      </Button>
+      <Button
+        variant="contained"
+        onClick={this.deleteFav}
+        color="secondary"
+      >
+        Delete
+      </Button>
+    </FormGroup>
+  </Modal>
+</>
   );
 }
 }

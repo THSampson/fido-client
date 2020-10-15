@@ -67,8 +67,8 @@ class profileCreate extends React.Component<IProps, IState> {
       .then((data) => {
         console.log(data.profile)
         this.setState({
-          profile: data.profile,
-        });
+          profile: data.profile
+          });
         this.props.fetchProfile();
       });
   };
