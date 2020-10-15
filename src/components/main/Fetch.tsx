@@ -59,11 +59,12 @@ class Fetch extends React.Component<IProps, IState> {
       body: JSON.stringify(animalObject),
       headers: new Headers({
         "Content-Type": "application/json",
-        Authorization: this.props.sessionToken,
+        "Authorization": this.props.sessionToken,
       }),
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data.animals)
            this.setState({
           data: data.animals,
          });
@@ -107,7 +108,7 @@ class Fetch extends React.Component<IProps, IState> {
         </FormControl>
 
         {
-          <FetchResults data={this.state.data}/>
+          <FetchResults sessionToken={this.props.sessionToken} data={this.state.data}/>
         }
       </div>
     );

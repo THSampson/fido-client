@@ -13,6 +13,7 @@ interface IState {
     lastName: string,
     email: string,
     password: string
+    sessionToken: string
 }
 
 
@@ -25,6 +26,7 @@ class Auth extends React.Component<IProps,IState> {
     lastName: '',
     email: '',
     password: '',
+    sessionToken: ''
     }
  }
 
@@ -59,6 +61,10 @@ fetch(url, {
 .then(res => res.json())
 .then((json) => {
     this.props.updateToken(json.sessionToken)
+     console.log(json.sessionToken)
+     this.setState({
+         sessionToken: json.sessionToken
+     })
 })
 .catch(err => console.log(err))
 }

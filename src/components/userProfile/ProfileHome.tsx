@@ -56,17 +56,16 @@ class Main extends React.Component<any, IState> {
       method: "GET",
       headers: new Headers({
         "Content-Type": "application/json",
-        "Authorization": this.props.sessionToken
       }),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data[0])
+        console.log(data.profile)
         //write conditional statement that checks what getting back from api. then set state according to that
         //setState update profile to data[1] AND change hasProfile to true otherwise null 
         { return data.length > 0 ? 
          this.setState({
-         profile: data[0],
+         profile: data.profile,
          hasProfile: true 
          })
         :  null  }

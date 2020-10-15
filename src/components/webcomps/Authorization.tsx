@@ -26,7 +26,6 @@ class Authorization extends React.Component<IProps, IState> {
     this.setState({
       sessionToken: newToken,
     });
-    console.log(this.state.sessionToken);
   };
 
   viewToggle = () => {

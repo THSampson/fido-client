@@ -61,14 +61,13 @@ class profileCreate extends React.Component<IProps, IState> {
       body: JSON.stringify(profileObject),
       headers: new Headers({
         "Content-Type": "application/json",
-        "Authorization": this.props.sessionToken,
       }),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data[0])
+        console.log(data.profile)
         this.setState({
-          profile: data[0],
+          profile: data.profile,
         });
         this.props.fetchProfile();
       });

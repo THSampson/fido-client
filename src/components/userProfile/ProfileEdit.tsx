@@ -57,7 +57,6 @@ class Edit extends React.Component<any, IState> {
          method: "DELETE",
           headers: new Headers({
            "Content-Type": "application/json",
-           "Authorization": this.props.sessionToken
          }),
        })
          this.props.fetchProfile();
@@ -77,13 +76,12 @@ editProfile = (event: any) => {
       body: JSON.stringify(profileObject),
       headers: new Headers({
         "Content-Type": "application/json",
-        "Authorization": this.props.sessionToken
       }),
     })
       .then((res) => res.json())
       .then((data) => {
         this.setState({
-        profile: data[0],
+        profile: data,
           // name: '',
           // age: '',
           // kids: true,
