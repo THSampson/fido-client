@@ -3,7 +3,6 @@ import {Card, Typography, Modal, Button, TextField, FormGroup, CardContent, Card
 import APIURL from '../../helpers/environment';
 import styled from 'styled-components';
 import './Favorites.css';
-import FavCard from './FavCard';
 import EditFavorites from './EditFavorites';
 
 
@@ -15,6 +14,7 @@ margin-left: auto
 
 type FavProps = {
     sessionToken: string, 
+    getFavs: Function
 }  
 
 interface IState {
@@ -25,6 +25,7 @@ results: any,
 id: number,
 open: boolean,
 updateActive: boolean,
+favorites: [],
     }
 
 
@@ -40,24 +41,33 @@ class Fav extends React.Component<FavProps, IState> {
       id: 0,
         open: false,
         updateActive: false,
+        favorites: [],
 
     };
   }
-  getFavs = () => {
-    fetch(`${APIURL}/favorites`, {
-        method: 'GET',
-        headers: new Headers({
-            "Content-Type": "application/json",
-            "Authorization": this.props.sessionToken
-          }),
-    })
-    .then(res => res.json())
-    .then((data) => {
-      console.log(data); 
-    })
-    .catch((err) => console.log(err));
-}
+  componentWillMount = () => {
+    this.getFavs();
+  }
 
+    getFavs = () => {
+      fetch(`${APIURL}/favorites`, {
+          method: 'GET',
+          headers: new Headers({
+              "Content-Type": "application/json",
+              "Authorization": this.props.sessionToken
+            }),
+      })
+      .then(res => res.json())
+      .then((data) => {
+        this.setState({
+        favorites: data,
+        })
+        console.log(this.state.favorites)
+      })
+      .catch((err) => console.log(err));
+  }
+    
+ 
 handleChange = (event: any)  => {
   event.preventDefault(); 
      fetch(`${APIURL}/favorites/new`, {
@@ -75,9 +85,9 @@ handleChange = (event: any)  => {
     .then(res => res.json())
     .then(data => {
      this.setState({
-       results: data.fav
+       results: data.fav,
      })
-     console.log(data.fav)
+     console.log(data.fav.id)
     })
   .catch((err) => console.log(err))
   }
@@ -100,8 +110,7 @@ render() {
 <Button type="submit" variant="contained" color="primary">Submit</Button>
     </form>
     </div>
-<FavCard results={this.state.results} />
-<EditFavorites results={this.state.results} getFavs={this.getFavs} sessionToken={this.props.sessionToken}/>
+<EditFavorites favorites={this.state.favorites} results={this.state.results} getFavs={this.props.getFavs} sessionToken={this.props.sessionToken}/>
   </Centered>
  </>
   );

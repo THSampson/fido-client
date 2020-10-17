@@ -35,7 +35,7 @@ render() {
             <Switch>
             <Route path="/profile"><Profile sessionToken={this.props.sessionToken}/></Route>
             <Route path="/animals"><Fetch sessionToken={this.props.sessionToken}/></Route>
-            <Route path="/favorites"><Favorites sessionToken={this.props.sessionToken}/></Route>
+            <Route path="/favorites"><Favorites getFavs={this.props.getFavs} sessionToken={this.props.sessionToken}/></Route>
             </Switch>
            
         </div>

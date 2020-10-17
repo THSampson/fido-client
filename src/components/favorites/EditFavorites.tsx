@@ -1,9 +1,14 @@
 import React from 'react';
-import {Button, Typography, FormControlLabel, FormControl, FormLabel, FormGroup, TextField, Modal}  from '@material-ui/core';
+import {Button, Typography, FormControlLabel, FormControl, FormLabel, FormGroup, TextField}  from '@material-ui/core';
+import {Card, CardContent, CardHeader} from '@material-ui/core';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import { styled } from '@material-ui/core/styles';
 import APIURL from '../../helpers/environment';
 
-const MyModal = styled(Modal)({
+const MyDialog = styled(Dialog)({
   position: 'absolute',
   width: '500px',
   backgroundColor: 'white',
@@ -14,7 +19,9 @@ const MyModal = styled(Modal)({
 type IProps = {
     sessionToken: string;
     getFavs: Function
-    results: any
+    results: any,
+    favorites: any
+
   
   };
   
@@ -26,6 +33,7 @@ type IProps = {
     results: any,
     open: boolean,
     updateActive: boolean,
+    favId: number
   }
   
   class EditFav extends React.Component<IProps, IState> {
@@ -38,9 +46,11 @@ type IProps = {
         id: 0,
         open: false,
         updateActive: false,
-        results: ''
+        results: '',
+        favId: 0
       };
     }
+
 
     deleteFav = () => {
       fetch(`${APIURL}/favorite/${this.props.results.id}`, {
@@ -49,7 +59,6 @@ type IProps = {
            "Content-Type": "application/json",
          }),
        })
-         this.props.getFavs();
      };
 
 editFav = (event: any) => {
@@ -70,14 +79,16 @@ editFav = (event: any) => {
       .then((res) => res.json())
       .then((data) => {
         this.setState({
-        results: data
+        results: data,
+        favId: data.id
         }) 
+        console.log(data.id)
         this.props.getFavs(); 
       })
       .catch((err) => console.log(err));
   };
 
-   handleOpen = () => {
+   handleClickOpen = () => {
     this.setState({
       open: true });
   };
@@ -98,18 +109,49 @@ setFav = (event: any) => {
       updateActive: !this.state.updateActive
     });
   }  
+
+  
+   
+favMapper = () => {
+    return this.props.favorites.map((results: IState) => {
+      return(
+        <div key={results.id}>
+        <Card className="cardType" variant="outlined">
+<CardHeader
+ title={results.name}
+   />
+ <CardContent>
+  <Typography variant="body2" color="textSecondary" component="p">
+      Type: {results.type}
+  </Typography>
+</CardContent>
+  <CardContent>
+      <Typography>
+          Comments: {results.comment}
+    </Typography>
+    </CardContent> 
+    <Button variant="contained" color="primary" onClick={this.handleClickOpen}>Edit Fav</Button> 
+    <Button variant="contained" color="secondary" onClick={this.deleteFav}>Delete Fav</Button>
+</Card>
+
+</div>
+      )
+    }
+    )
+  }
 render(){
 return(
 <div> 
-<Button variant="contained" color="primary" onClick={this.handleOpen}>Edit Fav</Button>
-<MyModal
+  
+{this.favMapper()}
+<MyDialog
     open={this.state.open}
     onClose={this.handleClose}
-    onClick={this.updateToggle}
     aria-labelledby="simple-modal-title"
     aria-describedby="simple-modal-description"
   >
-    <FormGroup>
+    <DialogTitle>Edit</DialogTitle>
+    <DialogContent>
       <TextField
         id="name"
         name="name"
@@ -131,23 +173,18 @@ return(
         variant="outlined"
         onChange={this.setFav}
       />
+      <br />
       <Button
         type="submit"
-        onClick={this.editFav}
+        onClick={this.handleClose}
+        onSubmit={this.editFav}
         variant="contained"
         color="primary"
       >
         Submit
       </Button>
-      <Button
-        variant="contained"
-        onClick={this.deleteFav}
-        color="secondary"
-      >
-        Delete
-      </Button>
-    </FormGroup>
-  </MyModal>
+    </DialogContent>
+  </MyDialog>
   </div>
 )
 
