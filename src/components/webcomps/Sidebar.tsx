@@ -10,17 +10,12 @@ type IProps = {
     sessionToken: string, 
     }
 
-interface IState {
-    sessionToken: string,
-    }
 
-class Sidebar extends React.Component<any, IState> {
+
+class Sidebar extends React.Component<any, {}> {
         constructor(props: IProps){
         super(props)
-        this.state = {
-        sessionToken: '',
-        }
-    }
+         }
 
 render() {
  return (

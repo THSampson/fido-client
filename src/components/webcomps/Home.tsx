@@ -21,7 +21,7 @@ render() {
         <h3>I hope you enjoy your stay. Please look around.</h3>
         <h3>I hope you can find your furrever friend here too!</h3>
          <Router>
-        <Sidebar
+        <Sidebar sessionToken={this.props.sessionToken}
           />
         </Router>
     </MyText>

@@ -4,34 +4,22 @@ import {Paper, Grid, Button, Typography, FormControlLabel, FormControl, FormLabe
 import Sidebar from "../webcomps/Sidebar";
 import { styled } from '@material-ui/core/styles';
 import Header from '../webcomps/Header'
-import ProfileCreate from "../userProfile/ProfileCreate";
+import ProfileEdit from "../userProfile/ProfileEdit";
 
 import './ProfileHome.css';
 
-const MyModal = styled(Modal)({
-  position: 'absolute',
-  width: '500px',
-  backgroundColor: 'white',
-  border: '2px solid black',
-  padding: '10px',
-});
+
+type ProfileProps = {
+  sessionToken: string
+}
 
 
-type IProps = {
-  sessionToken: string;
-  editProfile: Function;
-  // deleteProfile: Function;
-  // profileToggle: Function;
-  // updateToggle: Function;
-  
-};
 interface Profile {
 name: string;
 age: string;
 kids: boolean;
 pets: boolean;
 location: string,
-id: number
 }
 
 interface IState {
@@ -39,96 +27,122 @@ interface IState {
   updateActive: boolean;
   createActive: boolean;
   profileToUpdate: object;
-  open: boolean;
-  id: number;
-  hasProfile: boolean
+  hasProfile: boolean,
+  profileId: number
 }
 
 
 
-class Main extends React.Component<any, IState> {
-  constructor(props: IProps) {
+class Main extends React.Component<ProfileProps, IState> {
+  constructor(props: ProfileProps) {
     super(props);
     this.state = {
-      profile: { name: "", age: "", kids: true, pets: true, location: "", id: 0 },
+      profile: { name: "", age: "", kids: true, pets: true, location: ""},
       updateActive: false,
       createActive: false,
       profileToUpdate: {},
-      open: false,
-      id: 0,
-      hasProfile: false
+      hasProfile: false,
+      profileId: 0
     };
+    this.handleChange = this.handleChange.bind(this);
   }
-
-  componentWillMount = () => {
-    this.fetchProfile();
-  };
+componentWillMount = () => {
+this.fetchProfile();
+}
   fetchProfile = () => {
     fetch(`${APIURL}/profile`, {
       method: "GET",
       headers: new Headers({
         "Content-Type": "application/json",
+        Authorization: this.props.sessionToken,
       }),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.profile)
-        //write conditional statement that checks what getting back from api. then set state according to that
-        //setState update profile to data[1] AND change hasProfile to true otherwise null 
-        { return data.length > 0 ? 
-         this.setState({
-         profile: data.profile,
-         hasProfile: true 
-         })
-        :  null  }
+        console.log(data.id)
+        this.setState({
+          profileId: data.id
+        })
       });
-    };
+    }
+  
 
-    deleteProfile = () => {
-      fetch(`${APIURL}/profile/${this.state.profile.id}`, {
-         method: "DELETE",
-          headers: new Headers({
-           "Content-Type": "application/json",
-         }),
-       })
-         this.fetchProfile();
-     };
-
-editProfile = (event: any) => {
-    let profileObject = {
-        name: this.props.name,
-        age: this.props.age,
-        kids: this.props.kids,
-        pets: this.props.pets,
-        location: this.props.location
-      };
+  handleSubmit = (event: any) => {
+    console.log(this.props.sessionToken);
     event.preventDefault();
-    fetch(`${APIURL}/profile/${this.state.profile.id}`, {
-      method: "PUT",
-      body: JSON.stringify(profileObject),
+    fetch(`${APIURL}/profile/create`, {
+      method: "POST",
+      body: JSON.stringify({
+      name: this.state.profile.name,
+      age: this.state.profile.age,
+      kids: this.state.profile.kids,
+      pets: this.state.profile.pets,
+      location: this.state.profile.location
+      }),
       headers: new Headers({
         "Content-Type": "application/json",
+        Authorization: this.props.sessionToken
       }),
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data)
         this.setState({
-        profile: data,
-          // name: '',
-          // age: '',
-          // kids: true,
-          // pets: true,
-          // location: '',
-        }) 
-        this.fetchProfile(); 
-      })
-      .catch((err) => console.log(err));
+          profile: data,
+          hasProfile: true,
+           });
+      });
   };
 
-  handleChange = (event: any) => {
-    event.preventDefault();
-    this.setState({ ...this.state, [event.target.name]: event.target.checked });
-  };
+editUpdateProfile = () => {
+  this.setState({
+    profileToUpdate: this.state.profile 
+  })
+}
+
+editProfile = (event: any) => {
+  event.preventDefault();
+ fetch(`${APIURL}/profile/${this.state.profileId}`, {
+   method: "PUT",
+   body: JSON.stringify({
+     name: this.state.profile.name,
+     age: this.state.profile.age,
+     kids: this.state.profile.kids,
+     pets: this.state.profile.pets,
+     location: this.state.profile.location 
+   }),
+   headers: new Headers({
+     "Content-Type": "application/json",
+     "Authorization": this.props.sessionToken
+   }),
+ })
+   .then((res) => res.json())
+   .then((data) => {
+     console.log(data.id)
+     this.setState({
+     profile: data,
+      profileId: data.id 
+     }) 
+   })
+   .catch((err) => console.log(err));
+ };
+ 
+deleteProfile = (event: any) => {
+event.preventDefault();
+fetch(`${APIURL}/profile/${this.state.profileId}`, {
+method: 'DELETE',
+headers: new Headers({
+ 'Content-Type': 'application/json',
+ "Authorization": this.props.sessionToken
+})
+})
+}
+
+handleChange = (event: any) => {
+event.preventDefault();
+this.setState({ ...this.state, [event.target.name]: event.target.checked });
+};
+
 
   setProfile = (event: any) => {
     this.setState({
@@ -138,105 +152,65 @@ editProfile = (event: any) => {
     })
   }
 
-updateToggle = () => {
-    this.setState({
-      updateActive: !this.state.updateActive
-    });
-}
-
-profileCreateToggle = () => {
-return this.state.hasProfile == true ? null
-: <ProfileCreate sessionToken={this.props.sessionToken}  fetchProfile={this.fetchProfile}/>
-}
-
-  handleOpen = () => {
-    this.setState({
-      open: true,
-      updateActive: !this.state.updateActive,
-    });
-  };
-
-  handleClose = () => {
-    this.setState({
-      open: false,
-    });
-  };
 
   render() {
     return (
       <>
-       {this.profileCreateToggle()}  
-        <Paper variant="outlined" className="profile" elevation={3}>
-          {/* <h2>{this.state.profile.name}</h2>
-          <h3>{this.state.profile.age}</h3>
-          <h4>{this.state.profile.kids}</h4>
-          <h5>{this.state.profile.pets}</h5>
-          <h6>{this.state.profile.location}</h6> */}
- <Button onClick={this.handleOpen}>Edit Profile</Button>
-  <MyModal
-    open={this.state.open}
-    onClose={this.handleClose}
-    onClick={this.updateToggle}
-    aria-labelledby="simple-modal-title"
-    aria-describedby="simple-modal-description"
-  >
-    <FormGroup>
-      <TextField
-        id="name"
-        name="name"
-        label="Name"
-        variant="outlined"
-        value={this.props.name}
-        onChange={() => this.setProfile}
+      <div className="create">
+        <form onSubmit={this.handleSubmit}>
+<FormGroup>
+  <TextField
+    id="name"
+    name="name"
+    label="Name"
+    variant="outlined"
+    onChange={this.setProfile}
+  />
+  <TextField
+    id="age"
+    name="age"
+    label="Age"
+    variant="outlined"
+    onChange={this.setProfile}
+  />
+  <FormLabel>A Bit About Yourself</FormLabel>
+  <FormControlLabel
+    control={
+      <Switch
+      color="primary"
+      onChange={this.handleChange}
+        name="kids"
       />
-      <TextField
-        id="name"
-        label="Age"
-        name="age"
-        variant="outlined"
-        value={this.props.age}
-        onChange={() => this.setProfile}
+    }
+    label="Kids?"
+  />
+  <FormControlLabel
+    control={
+      <Switch
+      color="primary"
+        onChange={this.handleChange}
+       name="pets"
       />
-      <FormLabel>A Bit About Yourself</FormLabel>
-      <FormControlLabel
-        control={
-          <Switch
-          value={this.props.kids}
-            checked={this.props.kids}
-           onChange={this.handleChange}
-            name="kids"
-          />
-        }
-        label="Kids?"
-      />
-      <FormControlLabel
-        control={
-          <Switch
-          value={this.props.pets}
-            checked={this.props.pets}
-            onChange={this.handleChange}
-            name="pets"
-          />
-        }
-        label="Other Pets?"
-      />
-      <TextField
-        id="location"
-        name="location"
-        variant="outlined"
-        value={this.props.location}
-        label="Zipcode"
-        onChange={() =>
-          this.setProfile
-        }
-      />
-      <Button
+    }
+    label="Other Pets?"
+  />
+  <TextField
+    id="location"
+    name="location"
+    variant="outlined"
+    label="Zipcode"
+    onChange={this.setProfile}
+
+  />
+  <Button variant="contained" color="primary" type="submit">
+    Create
+  </Button>
+  <Button
         type="submit"
         onClick={this.editProfile}
         variant="contained"
-        color="primary"
       >
-        Submit
+      Edit
       </Button>
       <Button
         variant="contained"
@@ -245,9 +219,9 @@ return this.state.hasProfile == true ? null
       >
         Delete
       </Button>
-    </FormGroup>
-  </MyModal>
-        </Paper>
+</FormGroup>
+</form>
+</div>
       </>
     );
   }

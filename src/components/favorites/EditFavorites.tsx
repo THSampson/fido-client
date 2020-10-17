@@ -14,6 +14,7 @@ const MyModal = styled(Modal)({
 type IProps = {
     sessionToken: string;
     getFavs: Function
+    results: any
   
   };
   
@@ -42,7 +43,7 @@ type IProps = {
     }
 
     deleteFav = () => {
-      fetch(`${APIURL}/favorite/${this.state.id}`, {
+      fetch(`${APIURL}/favorite/${this.props.results.id}`, {
          method: "DELETE",
           headers: new Headers({
            "Content-Type": "application/json",
@@ -56,14 +57,14 @@ editFav = (event: any) => {
         name: this.state.name,
         age: this.state.type,
         comment: this.state.comment,
-        id: this.state.id
       };
     event.preventDefault();
-    fetch(`${APIURL}/profile/${this.state.id}`, {
+    fetch(`${APIURL}/profile/${this.props.results.id}`, {
       method: "PUT",
       body: JSON.stringify(favObject),
       headers: new Headers({
         "Content-Type": "application/json",
+        'Authorization': this.props.sessionToken
       }),
     })
       .then((res) => res.json())
@@ -86,7 +87,12 @@ editFav = (event: any) => {
       open: false });
   };
 
-
+setFav = (event: any) => {
+  this.setState({
+    ...this.state.results,
+    [event.target.name]: event.target.value
+  })
+}
  updateToggle = () => {
     this.setState({
       updateActive: !this.state.updateActive
@@ -95,7 +101,7 @@ editFav = (event: any) => {
 render(){
 return(
 <div> 
-<Button onClick={this.handleOpen}>Edit Profile</Button>
+<Button variant="contained" color="primary" onClick={this.handleOpen}>Edit Fav</Button>
 <MyModal
     open={this.state.open}
     onClose={this.handleClose}
@@ -109,24 +115,21 @@ return(
         name="name"
         label="Name"
         variant="outlined"
-        value={this.state.name}
-        onChange={(event) => this.setState({name: event.target.value})}
+        onChange={this.setFav}
       />
       <TextField
-        id="name"
-        label="Age"
-        name="age"
+        id="type"
+        label="Type"
+        name="type"
         variant="outlined"
-        value={this.state.type}
-        onChange={(event) => this.setState({type: event.target.value})}
+        onChange={this.setFav}
       />
         <TextField
-        id="name"
-        label="Age"
-        name="age"
+        id="comments"
+        label="comments"
+        name="comment"
         variant="outlined"
-        value={this.state.comment}
-        onChange={(event) => this.setState({comment: event.target.value})}
+        onChange={this.setFav}
       />
       <Button
         type="submit"

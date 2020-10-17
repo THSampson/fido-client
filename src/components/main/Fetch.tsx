@@ -108,7 +108,7 @@ class Fetch extends React.Component<IProps, IState> {
         </FormControl>
 
         {
-          <FetchResults sessionToken={this.props.sessionToken} data={this.state.data}/>
+          <FetchResults  sessionToken={this.props.sessionToken} data={this.state.data}/>
         }
       </div>
     );

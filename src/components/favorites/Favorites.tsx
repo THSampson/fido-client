@@ -3,6 +3,8 @@ import {Card, Typography, Modal, Button, TextField, FormGroup, CardContent, Card
 import APIURL from '../../helpers/environment';
 import styled from 'styled-components';
 import './Favorites.css';
+import FavCard from './FavCard';
+import EditFavorites from './EditFavorites';
 
 
 
@@ -11,7 +13,7 @@ margin-right: auto,
 margin-left: auto
 `
 
-type IProps = {
+type FavProps = {
     sessionToken: string, 
 }  
 
@@ -27,8 +29,8 @@ updateActive: boolean,
 
 
 
-class FavCard extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
+class Fav extends React.Component<FavProps, IState> {
+  constructor(props: FavProps) {
     super(props);
     this.state = {
       name: "",
@@ -46,6 +48,7 @@ class FavCard extends React.Component<IProps, IState> {
         method: 'GET',
         headers: new Headers({
             "Content-Type": "application/json",
+            "Authorization": this.props.sessionToken
           }),
     })
     .then(res => res.json())
@@ -66,6 +69,7 @@ handleChange = (event: any)  => {
       }),
       headers: new Headers ({
         'Content-Type': 'application/json',
+        "Authorization": this.props.sessionToken
         })
     })
     .then(res => res.json())
@@ -77,56 +81,13 @@ handleChange = (event: any)  => {
     })
   .catch((err) => console.log(err))
   }
-  deleteFav = () => {
-    fetch(`${APIURL}/favorites/${this.state.id}`, {
-       method: "DELETE",
-        headers: new Headers({
-         "Content-Type": "application/json",
-       }),
-     })
-       this.getFavs();
-   };
 
-editFav = (event: any) => {
-  let favObject = {
-      name: this.state.name,
-      age: this.state.type,
-      comment: this.state.comment
-    };
-  event.preventDefault();
-  fetch(`${APIURL}/favorites/${this.state.id}`, {
-    method: "PUT",
-    body: JSON.stringify(favObject),
-    headers: new Headers({
-      "Content-Type": "application/json",
-    }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      this.setState({
-      results: data
-      }) 
-      this.getFavs(); 
-    })
-    .catch((err) => console.log(err));
-};
+  handleOpen = () => {
+    this.setState({
+      open: true });
+  };
 
- handleOpen = () => {
-  this.setState({
-    open: true });
-};
-
-handleClose = () => {
-  this.setState({
-    open: false });
-};
-
-
-updateToggle = () => {
-  this.setState({
-    updateActive: !this.state.updateActive
-  });
-}  
+  
 render() {
   return (
     <>
@@ -139,79 +100,13 @@ render() {
 <Button type="submit" variant="contained" color="primary">Submit</Button>
     </form>
     </div>
-  
-    <Card className="cardType" variant="outlined">
-      <CardHeader
-       title={this.state.results.name}
-         />
-       <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p">
-          {this.state.results.type}
-        </Typography>
-      </CardContent>
-        <CardContent>
-            <Typography>
-            {this.state.results.comment}
-          </Typography>
-          </CardContent>
-          <Button variant="contained" onClick={this.handleOpen} size="small" color="primary">Edit</Button>
-    </Card>
-    </Centered>
-    
-    <Modal
-    className="modalType"
-    open={this.state.open}
-    onClose={this.handleClose}
-    onClick={this.updateToggle}
-    aria-labelledby="simple-modal-title"
-    aria-describedby="simple-modal-description"
-  >
-    <FormGroup>
-      <TextField
-        id="name"
-        name="name"
-        label="Name"
-        variant="outlined"
-        value={this.state.name}
-        onChange={(event) => this.setState({name: event.target.value})}
-      />
-      <TextField
-        id="name"
-        label="Age"
-        name="age"
-        variant="outlined"
-        value={this.state.type}
-        onChange={(event) => this.setState({type: event.target.value})}
-      />
-        <TextField
-        id="name"
-        label="Age"
-        name="age"
-        variant="outlined"
-        value={this.state.comment}
-        onChange={(event) => this.setState({comment: event.target.value})}
-      />
-      <Button
-        type="submit"
-        onClick={this.editFav}
-        variant="contained"
-        color="primary"
-      >
-        Submit
-      </Button>
-      <Button
-        variant="contained"
-        onClick={this.deleteFav}
-        color="secondary"
-      >
-        Delete
-      </Button>
-    </FormGroup>
-  </Modal>
-</>
+<FavCard results={this.state.results} />
+<EditFavorites results={this.state.results} getFavs={this.getFavs} sessionToken={this.props.sessionToken}/>
+  </Centered>
+ </>
   );
 }
 }
 
 
-export default FavCard;
+export default Fav;

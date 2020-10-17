@@ -2,23 +2,24 @@ import React from 'react';
 import APIURL from '../../helpers/environment';
 import './Auth.css';
 
-interface IProps {
-updateToken: Function,
-sessionToken?: string
+type AuthProps = {
+updateToken: (newToken: string) => void;
+sessionToken: string
+updateAdmin: (admin: boolean) => void
 }
 
-interface IState {
+interface AuthState {
     signIn: boolean,
     firstName: string,
     lastName: string,
     email: string,
-    password: string
+    password: string,
     sessionToken: string
+
 }
 
-
-class Auth extends React.Component<IProps,IState> {
- constructor(props: IProps) {
+class Auth extends React.Component<AuthProps,AuthState> {
+ constructor(props: AuthProps) {
     super(props)
     this.state = {
     signIn: true,
@@ -37,7 +38,8 @@ signInToggler = (event: any) => {
         firstName: '',
         lastName: '',
         email: '',
-        password: ''
+        password: '',
+        sessionToken: ''
     })
 }
 
@@ -59,11 +61,16 @@ fetch(url, {
     })
 })
 .then(res => res.json())
-.then((json) => {
-    this.props.updateToken(json.sessionToken)
-     console.log(json.sessionToken)
-   })
+.then((data) => {
+    if(!data.error) {
+window.localStorage.setItem("token", data.sessionToken);
+this.props.updateToken(data.sessionToken);
+console.log(data.sessionToken)
+} else {
+    alert('error');
+}})
 .catch(err => console.log(err))
+
 }
 
 signupField = () => !this.state.signIn ? (
@@ -91,7 +98,8 @@ render(){
     <label htmlFor="email">Email</label>
         <input type="text" id="email" placeholder="Email" value={this.state.email} 
         onChange={event => this.setState({
-            email: event.target.value})}/>
+            email: event.target.value})}
+            />
         <br />
         <label htmlFor="password">Password</label>
         <input type="password" id="password" placeholder="Password" value={this.state.password} 

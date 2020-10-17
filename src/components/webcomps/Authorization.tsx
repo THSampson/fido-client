@@ -1,38 +1,65 @@
 import React from "react";
 import Auth from "../Auth/Auth";
 import Home from "../webcomps/Home";
+import Admin from "../Admin/Admin";
 
-
-type IProps = {
-  sessionToken?: string;
-};
-
-interface IState {
-  sessionToken: string;
-  profile: [];
+type AppState = {
+sessionToken: string;
+admin: boolean,
 }
 
-class Authorization extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
+class Authorization extends React.Component<{}, AppState> {
+  constructor(props: {}) {
     super(props);
     this.state = {
-      sessionToken: "",
-      profile: [],
+    sessionToken: '',
+    admin: false
     };
+    
+this.updateToken = this.updateToken.bind(this);
+this.updateAdmin = this.updateAdmin.bind(this);
   }
 
-  updateToken = (newToken: string) => {
-    // localStorage.setItem('token', newToken);
+
+  clearToken = () => {
+    localStorage.clear();
     this.setState({
-      sessionToken: newToken,
-    });
-  };
+      sessionToken: '',
+      admin: false
+    })
+  }
+
+updateAdmin = (admin: boolean) => {
+  this.setState({
+    admin: admin
+  })
+}
+
+adminViewer = () => {
+  if(this.state.admin === true) {
+    return (
+      <Admin sessionToken={this.state.sessionToken} admin={this.state.admin} />
+    )
+  } else {
+    return (
+    <Home sessionToken={this.state.sessionToken} />
+    )
+  }
+}
+
+updateToken(newToken: string): void {
+  localStorage.setItem('token', newToken)
+  this.setState({ 
+    sessionToken: newToken 
+  })
+}
+
 
   viewToggle = () => {
-    return this.state.sessionToken ? (
+    return this.state.sessionToken === localStorage.getItem("token") ? (
      <Home sessionToken={this.state.sessionToken} />  
     ) : (
-    <Auth updateToken={this.updateToken} /> 
+    <Auth sessionToken={this.state.sessionToken} updateToken={this.updateToken} updateAdmin={this.updateAdmin}/> 
     );
   };
 
